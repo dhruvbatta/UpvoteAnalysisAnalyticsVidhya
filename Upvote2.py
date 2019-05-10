@@ -24,15 +24,15 @@ train['pd_watched'] = pd_watched
 
 feature_names = [x for x in train.columns if x not in ['Upvotes']]
 
-x_train, x_val, y_train, y_val = train_test_split(train[feature_names], target,test_size = 0.55,random_state =0)
+x_train, x_val, y_train, y_val = train_test_split(train[feature_names], target,test_size = 0.45,random_state =0)
 sc_X = StandardScaler()
 x_train = sc_X.fit_transform(x_train)
 x_val = sc_X.transform(x_val)
 
-poly_reg = PolynomialFeatures(degree = 3,interaction_only=False, include_bias=True)
+poly_reg = PolynomialFeatures(degree = 4,interaction_only=False, include_bias=True)
 X_poly = poly_reg.fit_transform(x_train)
 poly_reg.fit(x_train, y_train)
-lin_reg_1 = linear_model.LassoLars(alpha=0.021,max_iter=150)
+lin_reg_1 = linear_model.LassoLars(alpha=0.021,max_iter=300)
 lin_reg_1.fit(X_poly, y_train)
 
 # predicitng 
@@ -53,7 +53,7 @@ labelencoder_X = LabelEncoder()
 test['Tag'] = labelencoder_X.fit_transform(test['Tag'])
 
 from sklearn.preprocessing import Binarizer
-bn = Binarizer(threshold=13)
+bn = Binarizer(threshold=8)
 pd_watched = bn.transform([test['Answers']])[0]
 test['pd_watched'] = pd_watched
 
@@ -68,4 +68,4 @@ submission = pd.DataFrame({'ID': ids,
                            'Upvotes':pred_test
                            })
 
-submission.to_csv("final_sub2.csv",index=False)
+submission.to_csv("final_sub.csv",index=False)
